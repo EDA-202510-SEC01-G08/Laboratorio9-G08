@@ -54,7 +54,8 @@ def new_logic():
 
     analyzer["crimes"] = al.new_list()
     analyzer["dateIndex"] = rbt.new_map()
-    # TODO Crear el índice ordenado por áreas reportadas
+    # TODO Crear el índice ordenado por áreas reportadas - HECHO
+    analyzer["areaIndex"] = rbt.new_map()
     return analyzer
 
 # Funciones para realizar la carga
@@ -81,7 +82,8 @@ def add_crime(analyzer, crime):
     """
     al.add_last(analyzer['crimes'], crime)
     update_date_index(analyzer['dateIndex'], crime)
-    # TODO Actualizar el indice por areas reportadas
+    # TODO Actualizar el indice por areas reportadas --- HECHO
+    update_area_index(analyzer["areaIndex"], crime)
 
     return analyzer
 
@@ -92,13 +94,23 @@ def update_area_index(map, crime):
     si el area es nueva, se crea una entrada para el indice y se adiciona
     y si el area son ["", " ", None] se utiliza el valor por defecto 9999
     """
-    # TODO Implementar actualizacion del indice por areas reportadas
+    # TODO Implementar actualizacion del indice por areas reportadas --- HECHO
+    area = crime["REPORTING_AREA"]
     # revisar si el area es un str vacio ["", " ", None]
     # area desconocida es 9999
-
+    if area == None or area == " " or area == "":
+        area = 9999
+    
     # revisar si el area ya esta en el indice
-
+    entry = rbt.get(map, area)
+    if entry == None:
+        lista_entry = al.new_list()
+        al.add_last(lista_entry, crime)
+        rbt.put(map, area, lista_entry)
     # si el area ya esta en el indice, adicionar el crimen a la lista
+    else:
+        al.add_last(rbt.get(map, area), crime)
+
     return map
 
 
@@ -211,8 +223,9 @@ def index_height_areas(analyzer):
     """
     Altura del arbol por areas
     """
-    # TODO Retornar la altura del árbol por areas
-    pass
+    # TODO Retornar la altura del árbol por areas --- HECHO
+    height = rbt.height(analyzer["areaIndex"])
+    return height
 
 
 def index_size_areas(analyzer):
