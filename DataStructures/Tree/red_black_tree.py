@@ -308,3 +308,40 @@ def values_range(root, key_initial, key_final):
         sl.add_all(list, left_values)
         sl.add_all(list, right_values)
         return list
+
+def is_red(node):
+    if node is None:
+        return False
+    return node["color"] == "RED"
+
+def move_red_left(node):
+    flip_colors(node)
+    if node["right"] and is_red(node["right"].get("left")):
+        node["right"] = rotate_right(node["right"])
+        node = rotate_left(node)
+        flip_colors(node)
+    return node
+
+def move_red_right(node):
+    flip_colors(node)
+    if node["left"] and is_red(node["left"].get("left")):
+        node = rotate_right(node)
+        flip_colors(node)
+    return node
+
+def default_compare(key,element):
+    if key == element:
+        return 0
+    elif key < element:
+        return -1
+    else:
+        return 1    
+    
+def balance(node):
+    if is_red(node.get("right")) and not is_red(node.get("left")):
+        node = rotate_left(node)
+    if is_red(node.get("left")) and is_red(node["left"].get("left")):
+        node = rotate_right(node)
+    if is_red(node.get("left")) and is_red(node.get("right")):
+        flip_colors(node)
+    return node
