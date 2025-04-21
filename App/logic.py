@@ -217,31 +217,39 @@ def index_size_areas(analyzer):
     """
     Numero de elementos en el indice por areas
     """
-    # TODO Retornar el numero de elementos en el árbol por areas
-    pass
+    # TODO Retornar el numero de elementos en el árbol por areas HECHO
+    rta = rbt.size(analyzer["areaIndex"])
+    return rta
 
 
 def min_key_areas(analyzer):
     """
     Llave mas pequena por areas
     """
-    # TODO Retornar la llave más pequeña del árbol por áreas
-    pass
+    # TODO Retornar la llave más pequeña del árbol por áreas HECHO
+    rta = rbt.get_min(analyzer["areaIndex"])
+    return rta
 
 
 def max_key_areas(analyzer):
     """
     Llave mas grande por areas
     """
-    # TODO Retornar la llave más grande del árbol por áreas
-    pass
+    # TODO Retornar la llave más grande del árbol por áreas  HECHO
+    rta = rbt.get_max(analyzer["areaIndex"])
+    return rta
 
 def get_crimes_by_range_area(analyzer, initialArea, finalArea):
     """
     Retorna el numero de crimenes en un rango de areas
     """
-    # TODO Completar la consulta de crimenes por rango de areas
+    # TODO Retornar el número de crimenes en un rango de áreas HECHO
+    initialArea = int(initialArea)
+    finalArea = int(finalArea)
     totalcrimes = 0
+    lst = rbt.values(analyzer["areaIndex"], initialArea, finalArea)
+    for lstarea in lst["elements"]:
+        totalcrimes += al.size(lstarea["lstcrimes"])
     return totalcrimes
 
 def get_crimes_by_range(analyzer, initialDate, finalDate):

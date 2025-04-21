@@ -59,7 +59,8 @@ def print_menu():
     print("2- Cargar información de crimenes")
     print("3- Consultar crimenes en un rango de fechas")
     print("4- Consultar crimenes por codigo y fecha")
-    #TODO Agregar opción 5 en el menú, consultar por REPORTING_AREA
+    print("5- Consultar crimenes por area de reporte")
+    #TODO Agregar opción 5 en el menú, consultar por REPORTING_AREA HECHO
     print("0- Salir")
     print("*******************************************")
 
@@ -106,10 +107,16 @@ def main():
             print("\nTotal de ofensas tipo: " + offensecode + " en esa fecha:  " +
                 str(numoffenses))
         elif int(inputs[0]) == 5:
-            # TODO lab 9, implementar el I/O e invocar las funcions de la opcion 5
+            # TODO lab 9, implementar el I/O e invocar las funcions de la opcion 5 HECHO
             print("\nBuscando crimenes en un rango de areas: ")
             print("Las areas estan numeradas con enteros (1 - 962)")
             print("Un area desconocida tiene el el numero 9999")
+
+            initialArea = input("Ingrese el área inicial (entero): ")
+            finalArea = input("Ingrese el área final (entero): ")
+
+            total_crimes = logic.get_crimes_by_range_area(control, initialArea, finalArea)
+            print(f"\nTotal de crimenes en el rango de áreas {initialArea} - {finalArea}: {total_crimes}")
         else:
             sys.exit(0)
     sys.exit(0)
