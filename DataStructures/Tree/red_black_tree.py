@@ -283,8 +283,8 @@ def keys_range(root, key_initial, key_final):
         sl.add_last(list, rb.get_key(root))
         left_keys = keys_range(root["left"], key_initial, key_final)
         right_keys = keys_range(root["right"], key_initial, key_final)
-        sl.add_all(list, left_keys)
-        sl.add_all(list, right_keys)
+        sl.add_last(list, left_keys)
+        sl.add_last(list, right_keys)
         return list
     
 def values(my_rbt, key_initial, key_final):
@@ -305,8 +305,8 @@ def values_range(root, key_initial, key_final):
         sl.add_last(list, rb.get_value(root))
         left_values = values_range(root["left"], key_initial, key_final)
         right_values = values_range(root["right"], key_initial, key_final)
-        sl.add_all(list, left_values)
-        sl.add_all(list, right_values)
+        sl.add_last(list, left_values)
+        sl.add_last(list, right_values)
         return list
 
 def is_red(node):
