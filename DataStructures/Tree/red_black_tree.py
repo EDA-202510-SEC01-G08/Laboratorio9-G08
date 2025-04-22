@@ -1,22 +1,26 @@
 from DataStructures.Tree import rbt_node as rb
 from DataStructures.List import single_linked_list as sl
 from DataStructures.List import array_list as al
+from datetime import datetime
 
 def new_map():
     return {"root": None}
 
 def rotate_left(node_rbt):
-    new_right =  node_rbt["right"]["left"]
     new_root = node_rbt["right"]
-    node_rbt["right"] = new_right
+    node_rbt["right"] = new_root["left"]
     new_root["left"] = node_rbt
+    new_root["color"] = node_rbt["color"]
+    node_rbt["color"] = "RED"
     return new_root
 
 def rotate_right(node_rbt):
     new_root = node_rbt["left"]
-    new_left = new_root["right"]
-    node_rbt["left"] = new_left
+    node_rbt["left"] = new_root["right"]
     new_root["right"] = node_rbt
+    new_root["color"] = node_rbt["color"]
+    node_rbt["color"] = "RED"
+    return new_root
 
 def flip_node_color(node_rbt):
     if rb.is_red(node_rbt):
@@ -26,35 +30,41 @@ def flip_node_color(node_rbt):
     return node_rbt
 
 def flip_colors(node_rbt):
-    rb.change_color(node_rbt["left"], "BLACK")
-    rb.change_color(node_rbt["right"], "BLACK")
+    if node_rbt["left"]:
+        rb.change_color(node_rbt["left"], "BLACK")
+    if node_rbt["right"]:
+        rb.change_color(node_rbt["right"], "BLACK")
     rb.change_color(node_rbt, "RED")
     return node_rbt
 
 def put(my_rbt, key, value):
-
     if my_rbt["root"] is None:
         my_rbt["root"] = {"key": key, "value": value, "color": "RED", "left": None, "right": None}
-        rb.change_color(my_rbt["root"], "BLACK")
+        rb.change_color(my_rbt["root"], "BLACK")  # La raíz siempre debe ser negra
     else:
-        insert_node(my_rbt["root"], key, value)
+        my_rbt["root"] = insert_node(my_rbt["root"], key, value)
+    rb.change_color(my_rbt["root"], "BLACK")
     return my_rbt
 
 def insert_node(root, key, value):
-    
+    if root is None:
+        return {"key": key, "value": value, "color": "RED", "left": None, "right": None}
+
+    if type(key) is str:
+        key = int(key)  
+    if type(root["key"]) is str:
+        root["key"] = int(root["key"])  
+
     if key < root["key"]:
-        if root["left"] is None:
-            root["left"] = {"key": key, "value": value, "color": "RED", "left": None, "right": None}
-        else:
-            insert_node(root["left"], key, value)
-    
+        root["left"] = insert_node(root["left"], key, value)
     elif key > root["key"]:
-        if root["right"] is None:
-            root["right"] = {"key": key, "value": value, "color": "RED", "left": None, "right": None}
-        else:
-            insert_node(root["right"], key, value)
+        root["right"] = insert_node(root["right"], key, value)
     else:
         root["value"] = value
+
+    root = balance(root)
+
+    return root
 
 def get(my_rbt, key):
 
@@ -64,14 +74,21 @@ def get(my_rbt, key):
         return get_node(my_rbt["root"], key)
     
 def get_node(root, key):
+
     if root is None:
         return None
-    if key < rb.get_key(root):
+    if type(root["key"]) is str:
+        root["key"] = int(root["key"])
+    if type(key) is str:
+        key = int(key)
+    if key < root["key"]:
         return get_node(root["left"], key)
-    elif key > rb.get_key(root):
+    elif key > root["key"]:
         return get_node(root["right"], key)
     else:
-        return rb.get_value(root)
+        return root["value"]
+
+
 
 def contains(my_rbt, key):
     if get(my_rbt, key) is not None:
@@ -133,6 +150,12 @@ def get_min(my_rbt):
     else:
         return get_min_node(my_rbt["root"])
 
+def left_key(my_rbt):
+    if is_empty(my_rbt):
+        return None
+    else:
+        return get_min_node(my_rbt["root"])
+
 def get_min_node(root):
     if root is None:
         return None
@@ -141,6 +164,12 @@ def get_min_node(root):
     return rb.get_key(root)
 
 def get_max(my_rbt):
+    if is_empty(my_rbt):
+        return None
+    else:
+        return get_max_node(my_rbt["root"])
+    
+def right_key(my_rbt):
     if is_empty(my_rbt):
         return None
     else:
@@ -252,14 +281,13 @@ def rank_keys(root, key):
         return size_tree(root["left"])
 
 def height(my_rbt):
-    if is_empty(my_rbt):
+    if my_rbt is None or is_empty(my_rbt):
         return 0
-    else:
-        return height_tree(my_rbt["root"])
+    return height_tree(my_rbt["root"])
 
 def height_tree(root):
     if root is None:
-        return 0
+        return -1
     else:
         left_height = height_tree(root["left"])
         right_height = height_tree(root["right"])
@@ -287,27 +315,64 @@ def keys_range(root, key_initial, key_final):
         sl.add_last(list, right_keys)
         return list
     
+
 def values(my_rbt, key_initial, key_final):
     if is_empty(my_rbt):
-        return None
+        return sl.new_list()
     else:
         return values_range(my_rbt["root"], key_initial, key_final)
 
 def values_range(root, key_initial, key_final):
     if root is None:
-        return sl.new_list()
-    if key_initial > rb.get_key(root):
-        return values_range(root["right"], key_initial, key_final)
-    elif key_final < rb.get_key(root):
-        return values_range(root["left"], key_initial, key_final)
-    else:
-        list = sl.new_list()
-        sl.add_last(list, rb.get_value(root))
-        left_values = values_range(root["left"], key_initial, key_final)
-        right_values = values_range(root["right"], key_initial, key_final)
-        sl.add_last(list, left_values)
-        sl.add_last(list, right_values)
-        return list
+        return sl.new_list()  
+    
+    list = sl.new_list()
+
+    root_key = rb.get_key(root)  
+
+    if type(key_initial) == str and type(key_final) == str:
+        if int(key_initial) < root_key:
+            left_values = values_range(root["left"], key_initial, key_final)
+            for value in left_values["elements"]:
+                sl.add_last(list, value)
+
+        if int(key_initial) <= root_key <= int(key_final):
+            sl.add_last(list, rb.get_value(root))
+
+        if int(key_final) > root_key:
+            right_values = values_range(root["right"], key_initial, key_final)
+            for value in right_values["elements"]:
+                sl.add_last(list, value)
+
+    elif type(key_initial) in [int, float] and type(key_final) in [int, float]:
+        if int(key_initial) < root_key:
+            left_values = values_range(root["left"], key_initial, key_final)
+            for value in left_values["elements"]:
+                sl.add_last(list, value)
+
+        if int(key_initial) <= root_key <= int(key_final):
+            sl.add_last(list, rb.get_value(root))
+
+        if int(key_final) > root_key:
+            right_values = values_range(root["right"], key_initial, key_final)
+            for value in right_values["elements"]:
+                sl.add_last(list, value)
+
+    elif type(key_initial) == datetime.date and type(key_final) == datetime.date:
+        if int(key_initial) < root_key:
+            left_values = values_range(root["left"], key_initial, key_final)
+            for value in left_values["elements"]:
+                sl.add_last(list, value)
+
+        if int(key_initial) <= root_key <= int(key_final):
+            sl.add_last(list, rb.get_value(root))
+
+        if int(key_final) > root_key:
+            right_values = values_range(root["right"], key_initial, key_final)
+            for value in right_values["elements"]:
+                sl.add_last(list, value)
+
+    return list
 
 def is_red(node):
     if node is None:
@@ -338,10 +403,11 @@ def default_compare(key,element):
         return 1    
     
 def balance(node):
-    if is_red(node.get("right")) and not is_red(node.get("left")):
-        node = rotate_left(node)
-    if is_red(node.get("left")) and is_red(node["left"].get("left")):
-        node = rotate_right(node)
-    if is_red(node.get("left")) and is_red(node.get("right")):
-        flip_colors(node)
-    return node
+    if node is not None:
+        if is_red(node["right"]) and not is_red(node["left"]):
+            node = rotate_left(node)
+        if is_red(node["left"]) and is_red(node["left"]["left"]):
+            node = rotate_right(node)
+        if is_red(node["left"]) and is_red(node["right"]):
+            flip_colors(node)
+    return node                                     

@@ -30,6 +30,8 @@ import datetime
 from DataStructures.Tree import red_black_tree as rbt
 from DataStructures.List import array_list as al
 from DataStructures.Map import map_linear_probing as lp
+from DataStructures.List import single_linked_list as sl
+
 # TODO Realice la importación del Árbol Rojo Negro --- HECHO
 # TODO Realice la importación de ArrayList (al) o SingleLinked (sl) como estructura de datos auxiliar para sus requerimientos --- HECHO
 # TODO Realice la importación de LinearProbing (lp) o Separate Chaining (sp) como estructura de datos auxiliar para sus requerimientos --- HECHO
@@ -259,13 +261,19 @@ def get_crimes_by_range_area(analyzer, initialArea, finalArea):
     Retorna el numero de crimenes en un rango de areas
     """
     # TODO Retornar el número de crimenes en un rango de áreas HECHO
-    initialArea = int(initialArea)
-    finalArea = int(finalArea)
-    totalcrimes = 0
-    lst = rbt.values(analyzer["areaIndex"], initialArea, finalArea)
-    for lstarea in lst["elements"]:
-        totalcrimes += al.size(lstarea["lstcrimes"])
-    return totalcrimes
+    crimes_in_range = rbt.values(analyzer["areaIndex"], initialArea, finalArea)
+
+    final_list = sl.new_list()
+
+    # Iterar sobre la lista de listas (cada nodo del árbol puede tener múltiples crímenes)
+    for i in range(1, sl.size(crimes_in_range) + 1):
+        crime_list = sl.get_element(crimes_in_range, i)
+
+        for j in range(1, sl.size(crime_list) + 1):
+            crime = sl.get_element(crime_list, j)
+            sl.add_last(final_list, crime)
+
+    return final_list
 
 def get_crimes_by_range(analyzer, initialDate, finalDate):
     """
