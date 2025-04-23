@@ -317,62 +317,25 @@ def keys_range(root, key_initial, key_final):
     
 
 def values(my_rbt, key_initial, key_final):
-    if is_empty(my_rbt):
-        return sl.new_list()
+    lista_respuesta = sl.new_list()
+    if my_rbt["root"] is not None:
+        lista_respuesta = values_range(my_rbt["root"], key_initial, key_final, lista_respuesta)
+    return lista_respuesta
+
+def values_range(rbt_node, key_initial, key_final, list_key):
+    if int(key_initial) <= rbt_node["key"] <= int(key_final):
+        if rbt_node["left"] is not None:
+            list_key = keys_range(rbt_node["left"], key_initial, key_final)
+        sl.add_last(list_key, rbt_node["value"])    
+        if rbt_node["right"] is not None:
+            list_key = keys_range(rbt_node["right"], key_initial, key_final)
+    elif int(key_final) < rbt_node["key"]:
+        if rbt_node["left"] is not None:
+            list_key = keys_range(rbt_node["left"], key_initial, key_final)
     else:
-        return values_range(my_rbt["root"], key_initial, key_final)
-
-def values_range(root, key_initial, key_final):
-    if root is None:
-        return sl.new_list()  
-    
-    list = sl.new_list()
-
-    root_key = rb.get_key(root)  
-
-    if type(key_initial) == str and type(key_final) == str:
-        if int(key_initial) < root_key:
-            left_values = values_range(root["left"], key_initial, key_final)
-            for value in left_values["elements"]:
-                sl.add_last(list, value)
-
-        if int(key_initial) <= root_key <= int(key_final):
-            sl.add_last(list, rb.get_value(root))
-
-        if int(key_final) > root_key:
-            right_values = values_range(root["right"], key_initial, key_final)
-            for value in right_values["elements"]:
-                sl.add_last(list, value)
-
-    elif type(key_initial) in [int, float] and type(key_final) in [int, float]:
-        if int(key_initial) < root_key:
-            left_values = values_range(root["left"], key_initial, key_final)
-            for value in left_values["elements"]:
-                sl.add_last(list, value)
-
-        if int(key_initial) <= root_key <= int(key_final):
-            sl.add_last(list, rb.get_value(root))
-
-        if int(key_final) > root_key:
-            right_values = values_range(root["right"], key_initial, key_final)
-            for value in right_values["elements"]:
-                sl.add_last(list, value)
-
-    elif type(key_initial) == datetime.date and type(key_final) == datetime.date:
-        if int(key_initial) < root_key:
-            left_values = values_range(root["left"], key_initial, key_final)
-            for value in left_values["elements"]:
-                sl.add_last(list, value)
-
-        if int(key_initial) <= root_key <= int(key_final):
-            sl.add_last(list, rb.get_value(root))
-
-        if int(key_final) > root_key:
-            right_values = values_range(root["right"], key_initial, key_final)
-            for value in right_values["elements"]:
-                sl.add_last(list, value)
-
-    return list
+        if rbt_node["right"] is not None:
+            list_key = keys_range(rbt_node["right"], key_initial, key_final)
+    return list_key
 
 def is_red(node):
     if node is None:
