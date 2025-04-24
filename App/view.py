@@ -116,7 +116,7 @@ def main():
             finalArea = int(input("Ingrese el área final (entero): "))
 
             total_crimes = logic.get_crimes_by_range_area(control, initialArea, finalArea)
-            print(f"\nTotal de crimenes en el rango de áreas {initialArea} - {finalArea}: {total_crimes["size"]}")
+            print(f"\nTotal de crimenes en el rango de áreas {initialArea} - {finalArea}: {total_crimes}")
         else:
             sys.exit(0)
     sys.exit(0)

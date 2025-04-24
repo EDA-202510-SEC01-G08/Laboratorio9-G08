@@ -77,15 +77,11 @@ def get_node(root, key):
 
     if root is None:
         return None
-    if type(root["key"]) is str:
-        root["key"] = int(root["key"])
-    if type(key) is str:
-        key = int(key)
     if key < root["key"]:
         return get_node(root["left"], key)
     elif key > root["key"]:
         return get_node(root["right"], key)
-    else:
+    elif key == root["key"]:
         return root["value"]
 
 
@@ -294,53 +290,34 @@ def height_tree(root):
         return 1 + max(left_height, right_height)
     
 def keys(my_rbt, key_initial, key_final):
+    list = al.new_list()
     if is_empty(my_rbt):
         return None
     else:
-        return keys_range(my_rbt["root"], key_initial, key_final)
+        keys = keys_range(my_rbt["root"], key_initial, key_final, list)
+        print(keys)
+        return keys
     
-def keys_range(root, key_initial, key_final):
+def keys_range(root, key_initial, key_final, list):
     if root is None:
-        return sl.new_list()
-    if type(root["key"]) is str:
-        root["key"] = int(root["key"])
-    if type(key_initial) is str:
-        key_initial = int(key_initial)
-
-    if key_initial > rb.get_key(root):
-        return keys_range(root["right"], key_initial, key_final)
-    elif key_final < rb.get_key(root):
-        return keys_range(root["left"], key_initial, key_final)
-    else:
-        list = sl.new_list()
-        sl.add_last(list, rb.get_key(root))
-        left_keys = keys_range(root["left"], key_initial, key_final)
-        right_keys = keys_range(root["right"], key_initial, key_final)
-        sl.add_last(list, left_keys)
-        sl.add_last(list, right_keys)
-        return list
+        return root, list
+    elif root["key"] >= key_initial and root["key"] <= key_final:
+        al.add_last(list, keys_range(root["left"], key_initial, key_final, list))
+        al.add_last(list, keys_range(root["right"], key_initial, key_final, list))
+    elif root["key"] < key_initial:
+        al.add_last(list, keys_range(root["right"], key_initial, key_final, list))
+    elif root["key"] > key_final:
+        al.add_last(list, keys_range(root["left"], key_initial, key_final, list))
+    return list
     
 
 def values(my_rbt, key_initial, key_final):
-    lista_respuesta = sl.new_list()
-    if my_rbt["root"] is not None:
-        lista_respuesta = values_range(my_rbt["root"], key_initial, key_final, lista_respuesta)
-    return lista_respuesta
-
-def values_range(rbt_node, key_initial, key_final, list_key):
-    if int(key_initial) <= rbt_node["key"] <= int(key_final):
-        if rbt_node["left"] is not None:
-            list_key = keys_range(rbt_node["left"], key_initial, key_final)
-        sl.add_last(list_key, rbt_node["value"])    
-        if rbt_node["right"] is not None:
-            list_key = keys_range(rbt_node["right"], key_initial, key_final)
-    elif int(key_final) < rbt_node["key"]:
-        if rbt_node["left"] is not None:
-            list_key = keys_range(rbt_node["left"], key_initial, key_final)
-    else:
-        if rbt_node["right"] is not None:
-            list_key = keys_range(rbt_node["right"], key_initial, key_final)
-    return list_key
+     lista_keys = keys(my_rbt, key_initial, key_final)[1]
+     lista_values = al.new_list()
+     for key in lista_keys["elements"]:
+         value = get(my_rbt, key)
+         al.add_last(lista_values, value)
+     return lista_values
 
 def is_red(node):
     if node is None:
@@ -354,7 +331,7 @@ def move_red_left(node):
         node = rotate_left(node)
         flip_colors(node)
     return node
-
+ 
 def move_red_right(node):
     flip_colors(node)
     if node["left"] and is_red(node["left"].get("left")):
