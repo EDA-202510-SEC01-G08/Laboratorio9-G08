@@ -112,11 +112,11 @@ def main():
             print("Las areas estan numeradas con enteros (1 - 962)")
             print("Un area desconocida tiene el el numero 9999")
 
-            initialArea = input("Ingrese el área inicial (entero): ")
-            finalArea = input("Ingrese el área final (entero): ")
+            initialArea = int(input("Ingrese el área inicial (entero): "))
+            finalArea = int(input("Ingrese el área final (entero): "))
 
             total_crimes = logic.get_crimes_by_range_area(control, initialArea, finalArea)
-            print(f"\nTotal de crimenes en el rango de áreas {initialArea} - {finalArea}: {total_crimes}")
+            print(f"\nTotal de crimenes en el rango de áreas {initialArea} - {finalArea}: {total_crimes["size"]}")
         else:
             sys.exit(0)
     sys.exit(0)
