@@ -296,14 +296,14 @@ def keys(my_rbt, key_initial, key_final):
     else:
         keys = keys_range(my_rbt["root"], key_initial, key_final, list)
         print(keys)
+        print(my_rbt)
         return keys
     
 def keys_range(root, key_initial, key_final, list):
     if root is None:
-        return root, list
+        return None
     elif root["key"] >= key_initial and root["key"] <= key_final:
-        al.add_last(list, keys_range(root["left"], key_initial, key_final, list))
-        al.add_last(list, keys_range(root["right"], key_initial, key_final, list))
+        al.add_last(list, root["key"])
     elif root["key"] < key_initial:
         al.add_last(list, keys_range(root["right"], key_initial, key_final, list))
     elif root["key"] > key_final:
@@ -312,7 +312,7 @@ def keys_range(root, key_initial, key_final, list):
     
 
 def values(my_rbt, key_initial, key_final):
-     lista_keys = keys(my_rbt, key_initial, key_final)[1]
+     lista_keys = keys(my_rbt, key_initial, key_final)
      lista_values = al.new_list()
      for key in lista_keys["elements"]:
          value = get(my_rbt, key)
