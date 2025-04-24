@@ -302,6 +302,11 @@ def keys(my_rbt, key_initial, key_final):
 def keys_range(root, key_initial, key_final):
     if root is None:
         return sl.new_list()
+    if type(root["key"]) is str:
+        root["key"] = int(root["key"])
+    if type(key_initial) is str:
+        key_initial = int(key_initial)
+
     if key_initial > rb.get_key(root):
         return keys_range(root["right"], key_initial, key_final)
     elif key_final < rb.get_key(root):

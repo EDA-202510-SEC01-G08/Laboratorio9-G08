@@ -266,10 +266,10 @@ def get_crimes_by_range_area(analyzer, initialArea, finalArea):
     final_list = sl.new_list()
 
     # Iterar sobre la lista de listas (cada nodo del árbol puede tener múltiples crímenes)
-    for i in range(1, sl.size(crimes_in_range) + 1):
+    for i in range(1, sl.size(crimes_in_range)):
         crime_list = sl.get_element(crimes_in_range, i)
 
-        for j in range(1, sl.size(crime_list) + 1):
+        for j in range(1, sl.size(crime_list)):
             crime = sl.get_element(crime_list, j)
             sl.add_last(final_list, crime)
 
