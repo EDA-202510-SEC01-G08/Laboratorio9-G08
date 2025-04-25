@@ -77,11 +77,15 @@ def get_node(root, key):
 
     if root is None:
         return None
+    if type(root["key"]) is str:
+        root["key"] = int(root["key"])
+    if type(key) is str:
+        key = int(key)
     if key < root["key"]:
         return get_node(root["left"], key)
     elif key > root["key"]:
         return get_node(root["right"], key)
-    elif key == root["key"]:
+    else:
         return root["value"]
 
 
